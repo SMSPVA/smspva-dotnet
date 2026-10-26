@@ -39,7 +39,7 @@ else
     Console.WriteLine(result);
 ```
 
-The generated methods and request records are in `Resources.g.cs` and `Requests.g.cs`. Regenerate them with `node scripts/generate.mjs` after changing `sdk/contracts.json`. Building and installing the package does not require the documentation tree. Embedded contracts are included in the NuGet assembly.
+The generated methods and request records are in `Resources.g.cs` and `Requests.g.cs`. Regenerate them with `node scripts/generate.mjs` after changing `tests/contracts.json`. Building and installing the package does not require the documentation tree. Embedded contracts are included in the NuGet assembly.
 
 ## Authentication, errors and timeouts
 
