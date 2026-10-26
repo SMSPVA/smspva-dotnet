@@ -1,0 +1,23 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet: ['8.0.x', '10.0.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            ${{ matrix.dotnet }}
+      - run: dotnet build src/Smspva/Smspva.csproj -c Release
+      - run: dotnet run --project tests/Smspva.Tests.csproj -c Release
+      - run: dotnet pack src/Smspva/Smspva.csproj -c Release
+      - name: Check installed package
+        shell: pwsh
+        run: ./scripts/package-smoke.ps1

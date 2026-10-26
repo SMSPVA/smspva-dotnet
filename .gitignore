@@ -1,0 +1,10 @@
+.checks/
+.tools/
+artifacts/
+bin/
+obj/
+target/
+.env
+.env.*
+*.nupkg
+*.snupkg
