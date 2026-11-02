@@ -6,7 +6,7 @@
     <LangVersion>12</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PackageId>Smspva.Sdk</PackageId>
-    <Version>0.1.0-alpha.1</Version>
+    <Version>0.1.0-alpha.2</Version>
     <Description>Official C# and .NET SDK for SMSPVA SMS activation, phone number rental and private email rental APIs.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -19,7 +19,7 @@
     <RepositoryType>git</RepositoryType>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageTags>smspva;sms;verification;activation;phone-number;rental;email;sdk</PackageTags>
-    <PackageReleaseNotes>First public alpha covering all 56 Activation V2, Rental and Private Email operations.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add compact Activation number counts and provider ratings; cover 58 API operations.</PackageReleaseNotes>
     <Deterministic>true</Deterministic>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>

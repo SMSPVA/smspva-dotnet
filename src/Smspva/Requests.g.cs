@@ -27,6 +27,14 @@ public sealed record ActivationGetCountryNumberCountsRequest([property: JsonProp
     };
 }
 
+public sealed record ActivationGetCountryNumberCountsCompactRequest([property: JsonPropertyName("country")] string Country) : ISmspvaRequest
+{
+    public IReadOnlyDictionary<string, object?> ToParameters() => new Dictionary<string, object?>
+    {
+        ["country"] = Country,
+    };
+}
+
 public sealed record ActivationGetServicePriceRequest([property: JsonPropertyName("country")] string Country, [property: JsonPropertyName("service")] string Service) : ISmspvaRequest
 {
     [JsonPropertyName("voice")] public long? Voice { get; init; }
@@ -447,3 +455,4 @@ public sealed record EmailRestoreOrderRequest([property: JsonPropertyName("order
         ["orderid"] = OrderId,
     };
 }
+

@@ -35,6 +35,14 @@ public sealed partial class ActivationResource
     public Task<JsonElement> GetCountryNumberCountsAsync(ActivationGetCountryNumberCountsRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _client.RequestAsync("activation.getCountryNumberCounts", request.ToParameters(), options, cancellationToken);
 
+    /// <summary>GET /activation/countnumberscompact. Read operation.</summary>
+    public Task<JsonElement> GetAllNumberCountsCompactAsync(RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _client.RequestAsync("activation.getAllNumberCountsCompact", SmspvaClient.EmptyParameters, options, cancellationToken);
+
+    /// <summary>GET /activation/countnumberscompact/{country}. Read operation.</summary>
+    public Task<JsonElement> GetCountryNumberCountsCompactAsync(ActivationGetCountryNumberCountsCompactRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _client.RequestAsync("activation.getCountryNumberCountsCompact", request.ToParameters(), options, cancellationToken);
+
     /// <summary>GET /activation/serviceprice/{country}/{service}. Read operation.</summary>
     public Task<JsonElement> GetServicePriceAsync(ActivationGetServicePriceRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _client.RequestAsync("activation.getServicePrice", request.ToParameters(), options, cancellationToken);
@@ -244,3 +252,4 @@ public sealed partial class EmailResource
         => _client.RequestAsync("email.restoreOrder", request.ToParameters(), options, cancellationToken);
 
 }
+

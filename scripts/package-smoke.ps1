@@ -5,7 +5,7 @@ New-Item -ItemType Directory -Force -Path $smokePath | Out-Null
 @'
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><TreatWarningsAsErrors>true</TreatWarningsAsErrors></PropertyGroup>
-  <ItemGroup><PackageReference Include="Smspva.Sdk" Version="0.1.0-alpha.1" /></ItemGroup>
+  <ItemGroup><PackageReference Include="Smspva.Sdk" Version="0.1.0-alpha.2" /></ItemGroup>
 </Project>
 '@ | Set-Content -LiteralPath (Join-Path $smokePath 'Consumer.csproj')
 @'
