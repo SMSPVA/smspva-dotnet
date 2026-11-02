@@ -67,8 +67,8 @@ foreach(var fixture in fixtures.EnumerateArray()) {
     Check(actual.Headers.GetValueOrDefault("Connection")=="close","connection replay guard missing");
     tests++;
 }
-Check(tests==56 && seen.Count==56,"all methods must be covered exactly once");
-Console.WriteLine("PASS: all 56 named methods preserve wire contracts and response JSON");
+Check(tests==58 && seen.Count==58,"all methods must be covered exactly once");
+Console.WriteLine("PASS: all 58 named methods preserve wire contracts and response JSON");
 
 var status=HttpStatusCode.OK;
 var body="{\"status\":1,\"data\":[]}";
@@ -161,7 +161,7 @@ try {
     await server;
 } finally {listener.Stop();}
 tests++;
-Console.WriteLine($"PASS: {tests} checks (56 wire cases + auth, pending/no-stock, errors, validation, timeout, cancellation, expiry, real default HTTP transport)");
+Console.WriteLine($"PASS: {tests} checks (58 wire cases + auth, pending/no-stock, errors, validation, timeout, cancellation, expiry, real default HTTP transport)");
 
 sealed class FakeHandler(Func<HttpRequestMessage,CancellationToken,Task<HttpResponseMessage>> send) : HttpMessageHandler
 {

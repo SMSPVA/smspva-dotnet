@@ -1,11 +1,11 @@
 # SMSPVA .NET SDK
 
-Official C# and .NET client for [SMSPVA](https://smspva.com/), a service for receiving verification SMS, renting phone numbers and renting private email addresses. Covers all 56 methods in Activation V2 (20), Rental (22) and Private Email (14). Requires .NET 8 or later. This is an asynchronous alpha release. Alternative API is excluded.
+Official C# and .NET client for [SMSPVA](https://smspva.com/), a service for receiving verification SMS, renting phone numbers and renting private email addresses. Covers all 58 methods in Activation V2 (22), Rental (22) and Private Email (14). Requires .NET 8 or later. This is an asynchronous alpha release. Alternative API is excluded.
 
 ## Installation
 
 ```sh
-dotnet add package Smspva.Sdk --version 0.1.0-alpha.1
+dotnet add package Smspva.Sdk --version 0.1.0-alpha.2
 ```
 
 [Sign in to your SMSPVA account](https://smspva.com/signin.html), open **Profile and ApiKey**, and set **`SMSPVA_API_KEY`** in your server environment. Keep it out of source control. The example reads your balance and reference lists; it does not create an order.
@@ -83,7 +83,7 @@ dotnet run --project tests/Smspva.Tests.csproj
 dotnet pack src/Smspva/Smspva.csproj -c Release
 ```
 
-The standalone assertion runner uses fixture responses and injectable HTTP handlers, exercises all 56 methods plus auth, optional parameters, encoding, errors, pending/no-stock, validation, cancellation, timeout and saved-expiry behavior. It makes no production or paid requests. The library and test runner target .NET 8. Generated sources, contracts and fixtures are committed, so a standalone checkout builds without the documentation workspace.
+The standalone assertion runner uses fixture responses and injectable HTTP handlers, exercises all 58 methods plus auth, optional parameters, encoding, errors, pending/no-stock, validation, cancellation, timeout and saved-expiry behavior. It makes no production or paid requests. The library and test runner target .NET 8. Generated sources, contracts and fixtures are committed, so a standalone checkout builds without the documentation workspace.
 
 ## License
 
@@ -94,3 +94,17 @@ MIT. See [LICENSE](https://github.com/SMSPVA/smspva-dotnet/blob/main/LICENSE).
 Read the [SMSPVA API documentation](https://docs.smspva.com/) for parameters, response codes and workflows. Country, service and provider lists come from the live API. SMSPVA supports [phone number rentals](https://smspva.com/rent) and [private email rentals](https://smspva.com/rent-mail.html); availability and prices can change.
 
 For account or billing questions, visit the [SMSPVA help center](https://smspva.com/help.html). Report SDK bugs through [GitHub issues](https://github.com/SMSPVA/smspva-dotnet/issues), without API keys or private message content.
+
+## Compact number counts and operator ratings
+
+Using an already configured client:
+
+```csharp
+var allCounts = await client.Activation.GetAllNumberCountsCompactAsync();
+var uaCounts = await client.Activation.GetCountryNumberCountsCompactAsync(
+    new ActivationGetCountryNumberCountsCompactRequest("ua"));
+```
+
+Both requests use GET and the account API key in the `apikey` header. Country codes are case-insensitive; an unknown country returns `data: []`. No extra query parameters are required. Results are cached by the API for 60 seconds, independently for all countries and for each country.
+
+The SDK preserves `Operator`, `Country`, `Services`, `Rating` and `ServiceRatings` exactly as returned, including negative counts and missing or invalid ratings. It does not insert computed rating fields. For non-`Donor*` operators, the effective rating is 1. For `Donor*` operators, use a service rating if it is an integer from 1 to 10, then a valid overall rating; otherwise the rating is undefined. Lower is better.
