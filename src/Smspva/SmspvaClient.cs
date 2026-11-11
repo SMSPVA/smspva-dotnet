@@ -56,7 +56,7 @@ public sealed class SmspvaClient : IDisposable
         if ((type == "integer" && value is not long) || (type == "string" && value is not string)) throw new ValidationException($"Invalid type for parameter: {name}");
         if (schema.TryGetProperty("enum", out var choices) && !choices.EnumerateArray().Any(choice => type == "integer" ? choice.TryGetInt64(out var n) && n == (long)value : choice.GetString() == (string)value)) throw new ValidationException($"Invalid value for parameter: {name}");
         if (value is long number && ((schema.TryGetProperty("minimum",out var minimum) && number < minimum.GetInt64()) || (schema.TryGetProperty("maximum",out var maximum) && number > maximum.GetInt64()))) throw new ValidationException($"Invalid value for parameter: {name}");
-        if (value is string text && ((schema.TryGetProperty("minLength",out var min) && text.Length < min.GetInt32()) || (schema.TryGetProperty("maxLength",out var max) && text.Length > max.GetInt32()) || (schema.TryGetProperty("pattern",out var pattern) && !Regex.IsMatch(text, pattern.GetString()!, RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1))))) throw new ValidationException($"Invalid value for parameter: {name}");
+        if (value is string text && ((schema.TryGetProperty("minLength",out var min) && text.Length < min.GetInt32()) || (schema.TryGetProperty("maxLength",out var max) && text.Length > max.GetInt32()) || (schema.TryGetProperty("pattern",out var pattern) && !Regex.IsMatch(text, pattern.GetString()!.Replace("$", @"\z", StringComparison.Ordinal), RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1))))) throw new ValidationException($"Invalid value for parameter: {name}");
     }
 
     internal async Task<JsonElement> RequestAsync(string key, IReadOnlyDictionary<string, object?> input, RequestOptions? options, CancellationToken cancellationToken)
@@ -126,12 +126,13 @@ public sealed class SmspvaClient : IDisposable
         else if (apiStatus.ValueKind == JsonValueKind.Number) code = apiStatus;
         if (status < 200 || status >= 300) throw new ApiException(family, key, status, code, body);
         if (apiStatus.ValueKind != JsonValueKind.Number || !apiStatus.TryGetInt32(out var numberStatus)) throw new ProtocolException(family, key, status, stateful);
-        if (op.GetProperty("pending").GetBoolean() && status == 202 && IsPending(body)) return body;
+        if (op.GetProperty("pending").GetBoolean() && status == 202 && IsPendingType(body, op.TryGetProperty("pendingType", out var pendingType) ? pendingType.GetString()! : "SMS_NOT_YET_RECEIVED")) return body;
         if (op.GetProperty("noStock").GetBoolean() && status == 200 && numberStatus == 2) return body;
         if (family == "activation" ? numberStatus != 200 || hasError : numberStatus != 1) throw new ApiException(family, key, status, code, body);
         return body;
     }
-    public static bool IsPending(JsonElement value) => value.ValueKind == JsonValueKind.Object && value.TryGetProperty("statusCode",out var status) && status.ValueKind == JsonValueKind.Number && status.TryGetInt32(out var code) && code == 202 && value.TryGetProperty("error",out var error) && error.ValueKind == JsonValueKind.Object && error.TryGetProperty("type",out var type) && type.ValueKind == JsonValueKind.String && type.GetString() == "SMS_NOT_YET_RECEIVED";
+    public static bool IsPending(JsonElement value) => IsPendingType(value, "SMS_NOT_YET_RECEIVED");
+    private static bool IsPendingType(JsonElement value, string pendingType) => value.ValueKind == JsonValueKind.Object && value.TryGetProperty("statusCode",out var status) && status.ValueKind == JsonValueKind.Number && status.TryGetInt32(out var code) && code == 202 && value.TryGetProperty("error",out var error) && error.ValueKind == JsonValueKind.Object && error.TryGetProperty("type",out var type) && type.ValueKind == JsonValueKind.String && type.GetString() == pendingType;
     public static bool IsNoStock(JsonElement value) => value.ValueKind == JsonValueKind.Object && value.TryGetProperty("status",out var status) && status.ValueKind == JsonValueKind.Number && status.TryGetInt32(out var code) && code == 2;
     public void Dispose() { if (_ownsHttp) _http.Dispose(); }
 }

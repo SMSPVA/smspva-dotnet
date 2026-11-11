@@ -67,8 +67,8 @@ foreach(var fixture in fixtures.EnumerateArray()) {
     Check(actual.Headers.GetValueOrDefault("Connection")=="close","connection replay guard missing");
     tests++;
 }
-Check(tests==58 && seen.Count==58,"all methods must be covered exactly once");
-Console.WriteLine("PASS: all 58 named methods preserve wire contracts and response JSON");
+Check(tests==61 && seen.Count==61,"all methods must be covered exactly once");
+Console.WriteLine("PASS: all 61 named methods preserve wire contracts and response JSON");
 
 var status=HttpStatusCode.OK;
 var body="{\"status\":1,\"data\":[]}";
@@ -93,6 +93,10 @@ tests++;
 
 status=HttpStatusCode.Accepted; body="{\"statusCode\":202,\"error\":{\"type\":\"SMS_NOT_YET_RECEIVED\"}}";
 Check(SmspvaClient.IsPending(await edge.Activation.ReceiveSmsAsync(new ActivationReceiveSmsRequest(123))),"pending SMS changed");
+body="{\"statusCode\":202,\"error\":{\"type\":\"NUMBER_NOT_READY\",\"description\":\"Wait\"},\"retryAfter\":17}";
+Check((await edge.Activation.RepeatNumberAsync(new ActivationRepeatNumberRequest("01234","opt164"))).GetProperty("retryAfter").GetInt32()==17,"number pending response changed");
+body="{\"statusCode\":202,\"error\":{\"type\":\"PHONE_NOT_READY\",\"description\":\"Wait\"}}";
+Check((await edge.Activation.GetPhoneStatusAsync(new ActivationGetPhoneStatusRequest(123))).GetProperty("error").GetProperty("type").GetString()=="PHONE_NOT_READY","phone pending response changed");
 status=HttpStatusCode.OK; body="{\"status\":2}";
 Check(SmspvaClient.IsNoStock(await edge.Email.CreateOrderAsync(new EmailCreateOrderRequest("CODE","week",1))),"no-stock changed");
 var wrongNoStock=await Throws<ApiException>(()=>edge.Email.GetProvidersAsync());
@@ -161,7 +165,7 @@ try {
     await server;
 } finally {listener.Stop();}
 tests++;
-Console.WriteLine($"PASS: {tests} checks (58 wire cases + auth, pending/no-stock, errors, validation, timeout, cancellation, expiry, real default HTTP transport)");
+Console.WriteLine($"PASS: {tests} checks (61 wire cases + auth, pending/no-stock, errors, validation, timeout, cancellation, expiry, real default HTTP transport)");
 
 sealed class FakeHandler(Func<HttpRequestMessage,CancellationToken,Task<HttpResponseMessage>> send) : HttpMessageHandler
 {

@@ -67,6 +67,18 @@ public sealed partial class ActivationResource
     public Task<JsonElement> GetNumberByOperatorAsync(ActivationGetNumberByOperatorRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _client.RequestAsync("activation.getNumberByOperator", request.ToParameters(), options, cancellationToken);
 
+    /// <summary>POST /activation/repeatnumber/{number}/{service}. Changes state or may incur charges.</summary>
+    public Task<JsonElement> RepeatNumberAsync(ActivationRepeatNumberRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _client.RequestAsync("activation.repeatNumber", request.ToParameters(), options, cancellationToken);
+
+    /// <summary>GET /activation/statusphone/{orderid}. Read operation.</summary>
+    public Task<JsonElement> GetPhoneStatusAsync(ActivationGetPhoneStatusRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _client.RequestAsync("activation.getPhoneStatus", request.ToParameters(), options, cancellationToken);
+
+    /// <summary>PUT /activation/startsms/{orderid}. Changes state or may incur charges.</summary>
+    public Task<JsonElement> StartSmsAsync(ActivationStartSmsRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
+        => _client.RequestAsync("activation.startSms", request.ToParameters(), options, cancellationToken);
+
     /// <summary>GET /activation/sms/{orderid}. Changes state or may incur charges.</summary>
     public Task<JsonElement> ReceiveSmsAsync(ActivationReceiveSmsRequest request, RequestOptions? options = null, CancellationToken cancellationToken = default)
         => _client.RequestAsync("activation.receiveSms", request.ToParameters(), options, cancellationToken);
