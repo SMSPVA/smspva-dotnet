@@ -1,11 +1,11 @@
 # SMSPVA .NET SDK
 
-Official C# and .NET client for [SMSPVA](https://smspva.com/), a service for receiving verification SMS, renting phone numbers and renting private email addresses. Covers all 58 methods in Activation V2 (22), Rental (22) and Private Email (14). Requires .NET 8 or later. This is an asynchronous alpha release. Alternative API is excluded.
+Official C# and .NET client for [SMSPVA](https://smspva.com/), a service for receiving verification SMS, renting phone numbers and renting private email addresses. Covers all 61 methods in Activation V2 (25), Rental (22) and Private Email (14). Requires .NET 8 or later. This is an asynchronous alpha release. Alternative API is excluded.
 
 ## Installation
 
 ```sh
-dotnet add package Smspva.Sdk --version 0.1.0-alpha.2
+dotnet add package Smspva.Sdk --version 0.1.0-alpha.3
 ```
 
 [Sign in to your SMSPVA account](https://smspva.com/signin.html), open **Profile and ApiKey**, and set **`SMSPVA_API_KEY`** in your server environment. Keep it out of source control. The example reads your balance and reference lists; it does not create an order.
@@ -83,7 +83,7 @@ dotnet run --project tests/Smspva.Tests.csproj
 dotnet pack src/Smspva/Smspva.csproj -c Release
 ```
 
-The standalone assertion runner uses fixture responses and injectable HTTP handlers, exercises all 58 methods plus auth, optional parameters, encoding, errors, pending/no-stock, validation, cancellation, timeout and saved-expiry behavior. It makes no production or paid requests. The library and test runner target .NET 8. Generated sources, contracts and fixtures are committed, so a standalone checkout builds without the documentation workspace.
+The standalone assertion runner uses fixture responses and injectable HTTP handlers, exercises all 61 methods plus auth, optional parameters, encoding, errors, pending/no-stock, validation, cancellation, timeout and saved-expiry behavior. It makes no production or paid requests. The library and test runner target .NET 8. Generated sources, contracts and fixtures are committed, so a standalone checkout builds without the documentation workspace.
 
 ## License
 
@@ -108,3 +108,9 @@ var uaCounts = await client.Activation.GetCountryNumberCountsCompactAsync(
 Both requests use GET and the account API key in the `apikey` header. Country codes are case-insensitive; an unknown country returns `data: []`. No extra query parameters are required. Results are cached by the API for 60 seconds, independently for all countries and for each country.
 
 The SDK preserves `Operator`, `Country`, `Services`, `Rating` and `ServiceRatings` exactly as returned, including negative counts and missing or invalid ratings. It does not insert computed rating fields. For non-`Donor*` operators, the effective rating is 1. For `Donor*` operators, use a service rating if it is an integer from 1 to 10, then a valid overall rating; otherwise the rating is undefined. Lower is better.
+
+## Receive another SMS on a previously used number
+
+Call the Activation methods in this order: `RepeatNumberAsync`, `GetPhoneStatusAsync`, `StartSmsAsync`, `ReceiveSmsAsync`. Use a number previously paid for on the same service and carry the new order ID through the remaining calls. Request a new code in the target service after starting SMS reception.
+
+HTTP 202 with NUMBER_NOT_READY includes retryAfter in seconds. For PHONE_NOT_READY, wait five seconds. Wait 30 seconds between SMS checks while the order is active. Receiving a new paid SMS can incur a charge. If the number request has an uncertain outcome, inspect current orders before retrying.

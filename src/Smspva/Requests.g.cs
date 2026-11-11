@@ -98,6 +98,31 @@ public sealed record ActivationGetNumberByOperatorRequest([property: JsonPropert
     };
 }
 
+public sealed record ActivationRepeatNumberRequest([property: JsonPropertyName("number")] string Number, [property: JsonPropertyName("service")] string Service) : ISmspvaRequest
+{
+    public IReadOnlyDictionary<string, object?> ToParameters() => new Dictionary<string, object?>
+    {
+        ["number"] = Number,
+        ["service"] = Service,
+    };
+}
+
+public sealed record ActivationGetPhoneStatusRequest([property: JsonPropertyName("orderid")] long OrderId) : ISmspvaRequest
+{
+    public IReadOnlyDictionary<string, object?> ToParameters() => new Dictionary<string, object?>
+    {
+        ["orderid"] = OrderId,
+    };
+}
+
+public sealed record ActivationStartSmsRequest([property: JsonPropertyName("orderid")] long OrderId) : ISmspvaRequest
+{
+    public IReadOnlyDictionary<string, object?> ToParameters() => new Dictionary<string, object?>
+    {
+        ["orderid"] = OrderId,
+    };
+}
+
 public sealed record ActivationReceiveSmsRequest([property: JsonPropertyName("orderid")] long OrderId) : ISmspvaRequest
 {
     [JsonPropertyName("partnerkey")] public string? PartnerKey { get; init; }
